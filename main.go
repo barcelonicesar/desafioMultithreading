@@ -101,6 +101,14 @@ func consultarAPI(ctx context.Context, client *http.Client, api API, resultados 
 
 func fazerRequisicao(ctx context.Context, client *http.Client, url string) (json.RawMessage, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if strings.HasPrefix(url, "https://brasilapi.com.br/") {
+		select {
+		case <-time.After(300 * time.Millisecond):
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		}
+	} // Simula atraso para testar timeout
+
 	if err != nil {
 		return nil, err
 	}
